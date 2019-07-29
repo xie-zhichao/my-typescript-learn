@@ -6,9 +6,10 @@ const glob = require('glob');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
+const es = require('event-stream');
 
 gulp.task('clean', function () {
-    del(['../examples/**'], {force: true});
+    del(['../examples/**'], { force: true });
 });
 
 gulp.task('compile-ts', () => {
@@ -20,11 +21,15 @@ gulp.task('compile-ts', () => {
 
 gulp.task('bundle', ['compile-ts'], () => {
     const entries = glob.sync('../examples/**/app.js');
-    return browserify(entries)
-    .bundle()
-    .pipe(source('main.js')) // gives streaming vinyl file object
-    .pipe(buffer())
-    .pipe(gulp.dest('../examples/'));
+    const tasks = entries.map(entry => {
+        return browserify(entry)
+        .bundle()
+        .pipe(source('main.js')) // gives streaming vinyl file object
+        .pipe(buffer())
+        .pipe(gulp.dest(entry.replace(/[^\/]+$/, '')));
+    });
+    
+    return es.merge.apply(null, tasks);
 });
 
 gulp.task('compile-json', () => {

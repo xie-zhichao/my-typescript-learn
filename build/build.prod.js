@@ -6,20 +6,35 @@ const tsDtsProject = tsc.createProject("../tsconfig.json", {
     declaration: true,
     noResolve: false
 });
+const glob = require('glob');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const es = require('event-stream');
+const uglify = require('gulp-uglify');
 
 gulp.task('clean', function () {
     del(['../dist/**'], {force: true});
-});
-
-gulp.task('compile-js', () => {
-    return gulp.src(['../src/**/*.js'])
-        .pipe(gulp.dest('../dist/'));
 });
 
 gulp.task('compile-ts', () => {
     return gulp.src(['../src/**/*.ts'])
         .pipe(tsProject())
         .js.pipe(gulp.dest('../dist/'));
+});
+
+gulp.task('bundle', ['compile-ts'], () => {
+    const entries = glob.sync('../dist/**/app.js');
+    const tasks = entries.map(entry => {
+        return browserify(entry)
+        .bundle()
+        .pipe(source('main.js')) // gives streaming vinyl file object
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(gulp.dest(entry.replace(/[^\/]+$/, '')));
+    });
+    
+    return es.merge.apply(null, tasks);
 });
 
 gulp.task('compile-dts', () => {
@@ -38,11 +53,4 @@ gulp.task('compile-html', () => {
         .pipe(gulp.dest('../dist/'));
 });
 
-gulp.task('auto', () => {
-    gulp.watch('../src/**/*.ts', ['compile-ts', 'compile-dts']);
-    gulp.watch('../src/**/*.js', ['compile-js']);
-    gulp.watch('../src/**/*.json', ['compile-json']);
-    gulp.watch('../src/**/*.html', ['compile-html']);
-});
-
-gulp.task('default', ['compile-js', 'compile-ts', 'compile-dts', 'compile-json', 'compile-html']);
+gulp.task('default', ['compile-ts', 'bundle', 'compile-dts', 'compile-json', 'compile-html']);
