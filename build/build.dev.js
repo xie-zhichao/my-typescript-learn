@@ -42,10 +42,16 @@ gulp.task('compile-html', () => {
         .pipe(gulp.dest('../examples/'));
 });
 
+gulp.task('compile-resource', () => {
+    return gulp.src(['../src/**/*.glsl'])
+        .pipe(gulp.dest('../examples/'));
+});
+
 gulp.task('auto', () => {
     gulp.watch('../src/**/*.ts', ['compile-ts', 'bundle']);
     gulp.watch('../src/**/*.json', ['compile-json']);
     gulp.watch('../src/**/*.html', ['compile-html']);
+    gulp.watch('../src/**/*.glsl', ['compile-resource']);
 });
 
-gulp.task('default', ['compile-ts', 'bundle', 'compile-json', 'compile-html', 'auto']);
+gulp.task('default', ['compile-ts', 'bundle', 'compile-json', 'compile-html', 'compile-resource', 'auto']);
