@@ -42,7 +42,7 @@ export class HttpClient {
       xhr.responseType = responseType;
 			xhr.open(method, url);
 			xhr.onload = function() {
-				if (xhr.status == 200) {
+				if (xhr.status === 200) {
 					resolve({
 						success: true,
 						status: 200,
@@ -57,7 +57,21 @@ export class HttpClient {
 						data: xhr.responseText,
 					});
 				}
-      };
+			};
+			xhr.onerror = function() {
+				reject({
+					success: false,
+					status: xhr.status,
+					message: 'error'
+				});
+			};
+			xhr.ontimeout = function() {
+				reject({
+					success: false,
+					status: xhr.status,
+					message: 'timeout'
+				});
+			};
       xhr.send(data);
 		});
 	}
