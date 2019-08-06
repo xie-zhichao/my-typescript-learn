@@ -53,4 +53,9 @@ gulp.task('compile-html', () => {
         .pipe(gulp.dest('../dist/'));
 });
 
-gulp.task('default', ['compile-ts', 'bundle', 'compile-dts', 'compile-json', 'compile-html']);
+gulp.task('compile-resource', () => {
+    return gulp.src(['../src/**/*.glsl'])
+        .pipe(gulp.dest('../dist/'));
+});
+
+gulp.task('default', ['compile-ts', 'bundle', 'compile-dts', 'compile-json', 'compile-html', 'compile-resource']);

@@ -1,10 +1,13 @@
 /**
  * 着色器类
  */
+const GL = WebGLRenderingContext;
 export class Shader {
-  name: string;
-  gl: WebGLRenderingContext;
-  program: WebGLProgram;
+  private name: string;
+  private gl: WebGLRenderingContext;
+  private program: WebGLProgram;
+  private attributes: { [name: string]: number } = {};
+  private uniforms: { [name: string]: WebGLUniformLocation | null } = {};
 
   constructor(name: string, gl: WebGLRenderingContext, vertexSource: string, fragmentSource: string) {
     this.name = name;
@@ -14,6 +17,9 @@ export class Shader {
     const fragmentShader = this.loadShader(fragmentSource, this.gl.FRAGMENT_SHADER);
 
     this.program = this.createProgram(vertexShader, fragmentShader);
+
+    this.detectAttributes();
+    this.detectUniforms();
   }
 
   public getName(): string {
@@ -55,5 +61,47 @@ export class Shader {
     }
 
     return program;
+  }
+
+  public getAttributeLoaction(name: string): number {
+    const location = this.attributes[name];
+    if (location === undefined) {
+      throw new Error(`can not find attribute named '${name}' in shader named '${this.name}.'`);
+    }
+
+    return location;
+  }
+
+  public getUniformLocation(name: string): WebGLUniformLocation | null {
+    const uniform = this.uniforms[name];
+    if (uniform === undefined) {
+      throw new Error(`can not find uniform named '${name}' in shader named '${this.name}.'`);
+    }
+
+    return uniform;
+  }
+
+  private detectAttributes(): void {
+    const attributeCount = this.gl.getProgramParameter(this.program, GL.ACTIVE_ATTRIBUTES);
+    for (let i = 0; i < attributeCount; i++) {
+      const info = this.gl.getActiveAttrib(this.program, i);
+      if (!info) {
+        break;
+      }
+
+      this.attributes[info.name] = this.gl.getAttribLocation(this.program, info.name);
+    }
+  }
+
+  private detectUniforms(): void {
+    const uniformCount = this.gl.getProgramParameter(this.program, GL.ACTIVE_UNIFORMS);
+    for (let i = 0; i < uniformCount; i++) {
+      const info = this.gl.getActiveUniform(this.program, i);
+      if (!info) {
+        break;
+      }
+
+      this.uniforms[info.name] = this.gl.getUniformLocation(this.program, info.name);
+    }
   }
 }

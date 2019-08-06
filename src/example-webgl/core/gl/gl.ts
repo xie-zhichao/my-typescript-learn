@@ -25,6 +25,7 @@ export class WebGLUtils {
       }
     } else {
       cavans = document.createElement('canvas') as HTMLCanvasElement;
+      cavans.innerText = 'please check if your browser support webgl.';
       document.body.appendChild(cavans);
     }
 
