@@ -66,14 +66,14 @@ export class Engine {
     cavans.width = window.innerWidth;
     cavans.height = window.innerHeight;
 
-    gl.viewport(0, 0, 1, 1);
+    gl.viewport(0, 0, 100, 100);
   }
 
   private async loadShader(): Promise<Shader> {
-    const vertexSource = await HttpClient.get('/examples/example-webgl/resource/shader/vertex-source-1.glsl');
-    const fragmentSource = await HttpClient.get('/examples/example-webgl/resource/shader/fragment-source-1.glsl');
+    const { response: vertexSource } = await HttpClient.get('/examples/webgl/resource/shader/vertex-source-1.glsl');
+    const { response: fragmentSource } = await HttpClient.get('/examples/webgl/resource/shader/fragment-source-1.glsl');
     const { gl } = this.glContext;
-    const shader = new Shader('base', gl, vertexSource.data, fragmentSource.data);
+    const shader = new Shader('base', gl, vertexSource, fragmentSource);
     
     return shader;
   }

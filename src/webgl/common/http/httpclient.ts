@@ -15,7 +15,7 @@ export interface httpResult {
 	success: boolean;
 	status: number;
 	message: string;
-	data: any;
+	response: any;
 }
 
 export class HttpClient {
@@ -47,14 +47,14 @@ export class HttpClient {
 						success: true,
 						status: 200,
 						message: 'ok',
-						data: xhr.responseText,
+						response: xhr.responseText,
 					});
 				} else {
 					reject({
 						success: false,
 						status: xhr.status,
 						message: 'error',
-						data: xhr.responseText,
+						response: xhr.responseText,
 					});
 				}
 			};

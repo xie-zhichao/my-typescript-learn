@@ -35,10 +35,10 @@ export class GLBuffer {
 
   public constructor(gl: WebGLRenderingContext, dataType: number = GL.FLOAT, targetBufferType: number = GL.ARRAY_BUFFER,
     mode: number = GL.TRIANGLES) {
-      
+
     this.gl = gl;
     this.dataType = dataType;
-    this.targetBufferType = targetBufferType
+    this.targetBufferType = targetBufferType;
     this.mode = mode;
     this.elementSize = 0;
 
