@@ -15,6 +15,10 @@ gulp.task('clean', function () {
 gulp.task('compile-ts', () => {
     return gulp.src(['../src/**/*.ts'])
         .pipe(tsProject())
+        .on('error', function(err) {
+            console.log('ts compile error!', err);
+            this.emit('end');
+        })
         .js
         .pipe(gulp.dest('../examples/'));
 });
@@ -24,6 +28,10 @@ gulp.task('bundle', ['compile-ts'], () => {
     const tasks = entries.map(entry => {
         return browserify(entry)
         .bundle()
+        .on('error', function(err) {
+            console.log('browserify bundle error!', err);
+            this.emit('end');
+        })
         .pipe(source('main.js')) // gives streaming vinyl file object
         .pipe(buffer())
         .pipe(gulp.dest(entry.replace(/[^\/]+$/, '')));
