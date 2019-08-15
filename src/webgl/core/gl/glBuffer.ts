@@ -76,7 +76,9 @@ export class GLBuffer {
 
     if (this.hasArttributeLocation) {
       for (const it of this.attributes) {
-        this.gl.vertexAttribPointer(it.location, it.size, this.dataType, normalized, this.stride, it.offset * this.typeSize);
+        this.gl.vertexAttribPointer(it.location, it.size, this.dataType,
+           normalized, this.stride, it.offset * this.typeSize);
+        this.gl.enableVertexAttribArray(it.location);
       }
     }
   }
@@ -90,7 +92,7 @@ export class GLBuffer {
   }
 
   public addAttributeLocation(info: AttributeInfo): void {
-    this.hasArttributeLocation = true;
+    !this.hasArttributeLocation && (this.hasArttributeLocation = true);
     const infoClone = info.clone();
     infoClone.offset = this.elementSize;
     this.attributes.push(infoClone);

@@ -51,6 +51,7 @@ export class MessageBus {
   }
 
   public static update(time: number):void {
+    console.log('message bus update', time);
     if(MessageBus.normalMessageQueue.length === 0) {
       return;
     }

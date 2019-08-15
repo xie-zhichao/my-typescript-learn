@@ -54,7 +54,7 @@ gulp.task('compile-html', () => {
 });
 
 gulp.task('compile-resource', () => {
-    return gulp.src(['../src/**/*.glsl'])
+    return gulp.src(['../src/**/resource/**'])
         .pipe(gulp.dest('../dist/'));
 });
 

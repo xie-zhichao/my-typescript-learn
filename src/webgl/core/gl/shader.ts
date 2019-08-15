@@ -3,14 +3,14 @@
  */
 const GL = WebGLRenderingContext;
 export class Shader {
-  private name: string;
+  private _name: string;
   private gl: WebGLRenderingContext;
   private program: WebGLProgram;
   private attributes: { [name: string]: number } = {};
   private uniforms: { [name: string]: WebGLUniformLocation | null } = {};
 
   constructor(name: string, gl: WebGLRenderingContext, vertexSource: string, fragmentSource: string) {
-    this.name = name;
+    this._name = name;
     this.gl = gl;
 
     const vertexShader = this.loadShader(vertexSource, this.gl.VERTEX_SHADER);
@@ -22,8 +22,8 @@ export class Shader {
     this.detectUniforms();
   }
 
-  public getName(): string {
-    return this.name;
+  public get name(): string {
+    return this._name;
   }
 
   public use(): void {
@@ -49,7 +49,7 @@ export class Shader {
   private createProgram(vertexShader: WebGLShader, fragmentShader: WebGLShader): WebGLProgram {
     const program = this.gl.createProgram();
     if (program === null) {
-      throw new Error(`some error ocurred when create program, shader name: ${this.name}`);
+      throw new Error(`some error ocurred when create program, shader name: ${this._name}`);
     }
 
     this.gl.attachShader(program, vertexShader);
@@ -57,7 +57,7 @@ export class Shader {
     this.gl.linkProgram(program);
     const log = this.gl.getProgramInfoLog(program);
     if (log !== null && log.trim().length > 0) {
-      throw new Error(`some error ocurred when link program, error: ${log}, shader name: ${this.name}`);
+      throw new Error(`some error ocurred when link program, error: ${log}, shader name: ${this._name}`);
     }
 
     return program;
@@ -66,7 +66,7 @@ export class Shader {
   public getAttributeLoaction(name: string): number {
     const location = this.attributes[name];
     if (location === undefined) {
-      throw new Error(`can not find attribute named '${name}' in shader named '${this.name}.'`);
+      throw new Error(`can not find attribute named '${name}' in shader named '${this._name}.'`);
     }
 
     return location;
@@ -75,7 +75,7 @@ export class Shader {
   public getUniformLocation(name: string): WebGLUniformLocation | null {
     const uniform = this.uniforms[name];
     if (uniform === undefined) {
-      throw new Error(`can not find uniform named '${name}' in shader named '${this.name}.'`);
+      throw new Error(`can not find uniform named '${name}' in shader named '${this._name}.'`);
     }
 
     return uniform;

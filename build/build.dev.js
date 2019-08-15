@@ -51,7 +51,7 @@ gulp.task('compile-html', () => {
 });
 
 gulp.task('compile-resource', () => {
-    return gulp.src(['../src/**/*.glsl'])
+    return gulp.src(['../src/**/resource/**'])
         .pipe(gulp.dest('../examples/'));
 });
 
@@ -59,7 +59,7 @@ gulp.task('auto', () => {
     gulp.watch('../src/**/*.ts', ['compile-ts', 'bundle']);
     gulp.watch('../src/**/*.json', ['compile-json']);
     gulp.watch('../src/**/*.html', ['compile-html']);
-    gulp.watch('../src/**/*.glsl', ['compile-resource']);
+    gulp.watch('../src/**/resource/', ['compile-resource']);
 });
 
 gulp.task('default', ['compile-ts', 'bundle', 'compile-json', 'compile-html', 'compile-resource', 'auto']);
