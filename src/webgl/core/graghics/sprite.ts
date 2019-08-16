@@ -1,8 +1,9 @@
 import { GLBuffer, AttributeInfo } from "../gl/glBuffer";
 import { Vector3 } from "../math/vector3";
-import { Texture } from "./texture";
-import { TextureManager } from "./textureManager";
-import { Shader } from "../gl/shader";
+import { Shader } from "../gl/shaders/shader";
+import { Material } from "./material";
+import { MaterialManager } from "./materialManager";
+import { Matrix4x4 } from "../math/matrix4x4";
 
 /**
  * Sprite
@@ -15,16 +16,16 @@ export class Sprite {
 
   private gl: WebGLRenderingContext;
   protected buffer: GLBuffer | undefined;
-  private textureName: string;
-  private texture: Texture;
+  private materialName: string | undefined;
+  private material: Material | undefined;
 
   public position: Vector3 = new Vector3();
 
-  public constructor(gl: WebGLRenderingContext, name: string, textureName: string, width: number = 100, height: number = 100) {
+  public constructor(gl: WebGLRenderingContext, name: string, materialName: string, width: number = 100, height: number = 100) {
     this.gl = gl;
     this._name = name;
-    this.textureName = textureName;
-    this.texture = TextureManager.getTexture(gl, textureName);
+    this.materialName = materialName;
+    this.material = MaterialManager.getMaterial(materialName);
     this.width = width;
     this.height = height;
   }
@@ -35,7 +36,9 @@ export class Sprite {
 
   public destroy() {
     this.buffer && this.buffer.destroy();
-    TextureManager.releaseTexture(this.textureName);
+    this.materialName && MaterialManager.releaseMaterial(this.materialName);
+    this.material = undefined;
+    this.materialName = undefined;
   }
 
   public load(): void {
@@ -69,9 +72,23 @@ export class Sprite {
     if (this.buffer === undefined) {
       throw new Error('buffer is not initialized!');
     }
-    this.texture.activateAndBind(0);
-    const diffuseLocation = shader.getUniformLocation('u_diffuse');
-    this.gl.uniform1i(diffuseLocation, 0);
+
+    if (this.material === undefined) {
+      throw new Error('material is not initialized!');
+    }
+
+    const colorPosition = shader.getUniformLocation('u_tint');
+    this.gl.uniform4fv(colorPosition, this.material.tint.toFloat32Array());
+    
+    const modelPosition = shader.getUniformLocation('u_model');
+    this.gl.uniformMatrix4fv(modelPosition, false, new Float32Array(Matrix4x4.translation(this.position).data));
+
+    if(this.material.diffuseTexture !== undefined) {
+      this.material.diffuseTexture.activateAndBind(0);
+      const diffuseLocation = shader.getUniformLocation('u_diffuse');
+      this.gl.uniform1i(diffuseLocation, 0);
+    }
+    
     this.buffer.bind();
     this.buffer.draw();
   }
