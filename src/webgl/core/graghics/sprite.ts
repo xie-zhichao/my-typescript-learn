@@ -19,8 +19,6 @@ export class Sprite {
   private materialName: string | undefined;
   private material: Material | undefined;
 
-  public position: Vector3 = new Vector3();
-
   public constructor(gl: WebGLRenderingContext, name: string, materialName: string, width: number = 100, height: number = 100) {
     this.gl = gl;
     this._name = name;
@@ -68,7 +66,7 @@ export class Sprite {
     console.log(time);
   }
 
-  public draw(shader: Shader): void {
+  public draw(shader: Shader, model: Matrix4x4): void {
     if (this.buffer === undefined) {
       throw new Error('buffer is not initialized!');
     }
@@ -81,7 +79,7 @@ export class Sprite {
     this.gl.uniform4fv(colorPosition, this.material.tint.toFloat32Array());
     
     const modelPosition = shader.getUniformLocation('u_model');
-    this.gl.uniformMatrix4fv(modelPosition, false, new Float32Array(Matrix4x4.translation(this.position).data));
+    this.gl.uniformMatrix4fv(modelPosition, false, model.toFloat32Array());
 
     if(this.material.diffuseTexture !== undefined) {
       this.material.diffuseTexture.activateAndBind(0);
