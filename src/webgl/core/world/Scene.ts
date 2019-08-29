@@ -1,4 +1,5 @@
 import { SimObject } from "./simObject";
+import { Shader } from "../gl/shaders/shader";
 
 export class Scene {
   private _root: SimObject;
@@ -19,8 +20,8 @@ export class Scene {
     this._root.addChild(object);
   }
 
-  public getObjectByName(name: string): SimObject {
-    this._root.getObjectByName(name);
+  public getObjectByName(name: string): SimObject | undefined {
+    return this._root.getObjectByName(name);
   }
 
   public load(): void {
@@ -32,6 +33,6 @@ export class Scene {
   }
 
   public render(shader: Shader): void {
-    
+    this._root.render(shader);
   }
 }
