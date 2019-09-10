@@ -1,5 +1,4 @@
 import { GLBuffer, AttributeInfo } from "../gl/glBuffer";
-import { Vector3 } from "../math/vector3";
 import { Shader } from "../gl/shaders/shader";
 import { Material } from "./material";
 import { MaterialManager } from "./materialManager";

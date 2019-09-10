@@ -3,6 +3,7 @@ import { IComponent } from "./IComponent";
 import { BaseComponent } from "./baseComponent";
 import { Sprite } from "../graghics/sprite";
 import { Shader } from "../gl/shaders/shader";
+import { IComponentBuilder } from "./IComponentBuilder";
 
 export class SpriteComponentData implements IComponentData {
   public name: string | undefined;
@@ -19,7 +20,7 @@ export class SpriteComponentData implements IComponentData {
   }
 }
 
-export class SpriteComponentBuilder {
+export class SpriteComponentBuilder implements IComponentBuilder {
   public get type(): string {
     return 'sprite';
   }
@@ -54,5 +55,6 @@ export class SpriteComponent extends BaseComponent {
     }
     
     this._sprite.draw(shader, this.owner.worldMatrix);
+    super.render(shader);
   }
 }

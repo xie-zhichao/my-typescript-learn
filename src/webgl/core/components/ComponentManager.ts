@@ -8,11 +8,11 @@ export class ComponentManager {
     ComponentManager._registeredBuilders[builder.type] = builder;
   }
 
-  public static extractComponent(json: any): IComponent {
+  public static extractComponent(gl: WebGLRenderingContext, json: any): IComponent {
     if (json.type !== undefined) {
       const builder = ComponentManager._registeredBuilders[String(json.type)];
       if (builder !== undefined) {
-        return builder.buildFromJson(json);
+        return builder.buildFromJson(gl, json);
       }
     }
 

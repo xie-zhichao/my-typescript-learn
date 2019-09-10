@@ -123,11 +123,11 @@ export class SimObject {
       this._worldMatrix.data[14]);
   }
 
-  protected onAdded(scene: Scene): void {
+  protected onAdded(scene: Scene | undefined): void {
     this._scene = scene;
   }
 
-  private updateWorldMatrix(parentWorldMatrix: Matrix4x4): void {
+  private updateWorldMatrix(parentWorldMatrix: Matrix4x4 | undefined): void {
     if (parentWorldMatrix !== undefined) {
       this._worldMatrix = Matrix4x4.multiply(parentWorldMatrix, this._localMatrix);
     } else {
