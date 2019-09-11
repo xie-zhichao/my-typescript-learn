@@ -29,6 +29,10 @@ export class ImageAssetLoader implements IAssetLoader {
   public loadAsset(assetName: string):void {
     const image: HTMLImageElement = new Image();
     image.onload = this.onImageLoaded.bind(this, assetName, image);
+    // 支持cros
+    if (/^https?:\/\//.test(assetName) && (new URL(assetName)).origin !== window.location.origin) {
+      image.crossOrigin = "";
+    }
     image.src = assetName;
   }
 

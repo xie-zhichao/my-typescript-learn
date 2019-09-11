@@ -6,7 +6,7 @@ import { Shader } from './shaders/shader';
 import { Matrix4x4 } from '../math/matrix4x4';
 import { MessageBus } from '../message/messageBus';
 import { AssetManager } from '../assets/assetManager';
-import { BasicShader } from './shaders/baseShader';
+import { AsyncShaderLoader } from './shaders/AsyncShaderLoader';
 import { MaterialManager } from '../graghics/materialManager';
 import { Material } from '../graghics/material';
 import { Color } from '../graghics/color';
@@ -14,7 +14,7 @@ import { ZoneManager } from '../world/ZoneManager';
 
 export class Engine {
   private glContext: GLContext;
-  private basicShader: Shader | undefined;
+  private shader: Shader | undefined;
   private projection: Matrix4x4 | undefined;
 
   constructor() {
@@ -32,11 +32,11 @@ export class Engine {
     gl.clearColor(0, 0, 0, 1);
 
     try {
-      this.basicShader = await BasicShader.loadBasicShaderAsync(gl, 'resource/shader/vertex-source-1.glsl',
+      this.shader = await AsyncShaderLoader.load('basic', gl, 'resource/shader/vertex-source-1.glsl',
         'resource/shader/fragment-source-1.glsl');
-      this.basicShader.use();
+      this.shader.use();
 
-      MaterialManager.registerMaterial(new Material(gl, 'create', 'resource/assets/textures/tutorial.png', new Color(0, 128, 255, 255)));
+      MaterialManager.registerMaterial(new Material(gl, 'create', 'resource/assets/textures/bg.png', new Color(0, 128, 255, 255)));
 
       ZoneManager.changeZone(gl, 0);
     } catch (error) {
@@ -54,10 +54,10 @@ export class Engine {
     const { gl } = this.glContext;
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    if (this.basicShader !== undefined && this.projection !== undefined) {
-      ZoneManager.render(this.basicShader);
+    if (this.shader !== undefined && this.projection !== undefined) {
+      ZoneManager.render(this.shader);
 
-      const projectionPosition = this.basicShader.getUniformLocation('u_projection');
+      const projectionPosition = this.shader.getUniformLocation('u_projection');
       gl.uniformMatrix4fv(projectionPosition, false, new Float32Array(this.projection.data));
     }
 
@@ -70,7 +70,7 @@ export class Engine {
     cavans.width = window.innerWidth;
     cavans.height = window.innerHeight;
 
-    gl.viewport(-1, -1, cavans.width, cavans.height);
+    gl.viewport(0, 0, cavans.width, cavans.height);
     this.projection = Matrix4x4.orthographic(0, cavans.width, cavans.height, 0, -100.0, 100.0);
   }
 

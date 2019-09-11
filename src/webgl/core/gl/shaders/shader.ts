@@ -5,14 +5,20 @@ const GL = WebGLRenderingContext;
 export class Shader {
   private _name: string;
   private gl: WebGLRenderingContext;
-  private program: WebGLProgram;
+  private program: WebGLProgram | undefined;
   private attributes: { [name: string]: number } = {};
   private uniforms: { [name: string]: WebGLUniformLocation | null } = {};
 
-  constructor(name: string, gl: WebGLRenderingContext, vertexSource: string, fragmentSource: string) {
+  constructor(name: string, gl: WebGLRenderingContext) {
     this._name = name;
     this.gl = gl;
+  }
 
+  public get name(): string {
+    return this._name;
+  }
+
+  public load(vertexSource: string, fragmentSource: string): void {
     const vertexShader = this.loadShader(vertexSource, this.gl.VERTEX_SHADER);
     const fragmentShader = this.loadShader(fragmentSource, this.gl.FRAGMENT_SHADER);
 
@@ -22,11 +28,10 @@ export class Shader {
     this.detectUniforms();
   }
 
-  public get name(): string {
-    return this._name;
-  }
-
   public use(): void {
+    if (this.program === undefined) {
+      throw new Error('program is undefined: this shader maybe not loaded.');
+    }
     this.gl.useProgram(this.program);
   }
 
@@ -82,6 +87,9 @@ export class Shader {
   }
 
   private detectAttributes(): void {
+    if (this.program === undefined) {
+      throw new Error('program is undefined: this shader maybe not loaded.');
+    }
     const attributeCount = this.gl.getProgramParameter(this.program, GL.ACTIVE_ATTRIBUTES);
     for (let i = 0; i < attributeCount; i++) {
       const info = this.gl.getActiveAttrib(this.program, i);
@@ -94,6 +102,9 @@ export class Shader {
   }
 
   private detectUniforms(): void {
+    if (this.program === undefined) {
+      throw new Error('program is undefined: this shader maybe not loaded.');
+    }
     const uniformCount = this.gl.getProgramParameter(this.program, GL.ACTIVE_UNIFORMS);
     for (let i = 0; i < uniformCount; i++) {
       const info = this.gl.getActiveUniform(this.program, i);

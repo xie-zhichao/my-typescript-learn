@@ -40,7 +40,7 @@ export class Texture implements IMessageHandler {
     }
   }
 
-  public get name():string {
+  public get name(): string {
     return this._name;
   }
 
@@ -52,7 +52,7 @@ export class Texture implements IMessageHandler {
     return this._width;
   }
 
-  public get height():number {
+  public get height(): number {
     return this._height;
   }
 
@@ -66,16 +66,16 @@ export class Texture implements IMessageHandler {
     this.bind();
   }
 
-  public bind(): void{
+  public bind(): void {
     this._gl.bindTexture(this._gl.TEXTURE_2D, this._handle);
   }
 
-  public unbind(): void{
+  public unbind(): void {
     this._gl.bindTexture(this._gl.TEXTURE_2D, null);
   }
 
-  public onMessage(message: Message):void {
-    if(message.code === MESSAGE_ASSET_LOADER_ASSET_LOADED + this._name) {
+  public onMessage(message: Message): void {
+    if (message.code === MESSAGE_ASSET_LOADER_ASSET_LOADED + this._name) {
       this.loadTextureFromAsset(message.context as ImageAsset);
     }
   }
@@ -87,21 +87,23 @@ export class Texture implements IMessageHandler {
     this.bind();
 
     const { _gl } = this;
-    _gl.texImage2D(_gl.TEXTURE_2D, LEVEL, _gl.RGBA, _gl.RGBA, 
-        _gl.UNSIGNED_BYTE, asset.data);
-    
-    if(this.isPowerOf2()) {
+    _gl.texImage2D(_gl.TEXTURE_2D, LEVEL, _gl.RGBA, _gl.RGBA,
+      _gl.UNSIGNED_BYTE, asset.data);
+
+    if (this.isPowerOf2()) {
       _gl.generateMipmap(_gl.TEXTURE_2D);
     } else {
-      _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, _gl.CLAMP_TO_EDGE)
+      _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, _gl.CLAMP_TO_EDGE);
+      _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, _gl.CLAMP_TO_EDGE);
+      _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, _gl.LINEAR);
     }
   }
 
-  private isPowerOf2(): boolean{
+  private isPowerOf2(): boolean {
     return this.isValuePowerOf2(this._width) && this.isValuePowerOf2(this._height);
   }
 
-  private isValuePowerOf2(value:number):boolean{
-    return (value & (value-1)) === 0;
+  private isValuePowerOf2(value: number): boolean {
+    return (value & (value - 1)) === 0;
   }
 }
