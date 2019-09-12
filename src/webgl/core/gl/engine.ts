@@ -11,6 +11,11 @@ import { MaterialManager } from '../graghics/materialManager';
 import { Material } from '../graghics/material';
 import { Color } from '../graghics/color';
 import { ZoneManager } from '../world/ZoneManager';
+import { ComponentManager } from '../components/ComponentManager';
+import { SpriteComponentBuilder } from '../components/SpriteComponent';
+import { BehaviorManager } from '../behaviors/BehaviorManager';
+import { KeyboardMovementBehaviorBuilder } from '../behaviors/KeyboardMovementBehaviorData';
+import { RotationBehaviorBuilder } from '../behaviors/RotationBehavior';
 
 export class Engine {
   private glContext: GLContext;
@@ -24,8 +29,14 @@ export class Engine {
     console.log('Engine is created.')
   }
 
-  async start() {
+  public async start() {
     const { gl } = this.glContext;
+
+    ComponentManager.registerBuilder(new SpriteComponentBuilder());
+
+    BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
+    BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
+    
     AssetManager.initialize();
     ZoneManager.initialize(gl);
 
@@ -40,7 +51,7 @@ export class Engine {
 
       ZoneManager.changeZone(gl, 0);
     } catch (error) {
-      throw new Error(`draw sprite error: ${error}`);
+      throw new Error(`scene load error: ${error}`);
     }
 
     this.resize();

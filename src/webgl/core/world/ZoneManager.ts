@@ -4,8 +4,6 @@ import { AssetManager, MESSAGE_ASSET_LOADER_ASSET_LOADED } from "../assets/asset
 import { Message } from "../message/message";
 import { Shader } from "../gl/shaders/shader";
 import { JsonAsset } from "../assets/JsonAssetLoader";
-import { ComponentManager } from "../components/ComponentManager";
-import { SpriteComponentBuilder } from "../components/SpriteComponent";
 
 export class ZoneManager implements IMessageHandler {
   // private static _globalZoneID: number = -1;
@@ -23,7 +21,6 @@ export class ZoneManager implements IMessageHandler {
     ZoneManager._inst = new ZoneManager(gl);
 
     ZoneManager._registeredZones[0] = 'resource/zones/testZone.json';
-    ComponentManager.registerBuilder(new SpriteComponentBuilder());
   }
 
   public static changeZone(gl: WebGLRenderingContext, id: number): void {
