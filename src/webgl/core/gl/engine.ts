@@ -20,6 +20,7 @@ import { Message } from '../message/message';
 import { IMessageHandler } from '../message/IMessageHandler';
 import { MouseContext, InputManager } from '../input/InputManager';
 import { AudioManager } from '../audio/AudioManager';
+import { AnimatedSpriteComponentBuilder } from '../components/AnimatedSpriteComponent';
 
 export class Engine implements IMessageHandler {
   private glContext: GLContext;
@@ -39,7 +40,8 @@ export class Engine implements IMessageHandler {
     const { gl } = this.glContext;
 
     ComponentManager.registerBuilder(new SpriteComponentBuilder());
-
+    ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
+    
     BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
     
@@ -49,7 +51,7 @@ export class Engine implements IMessageHandler {
 
     Message.subscribe('MOUSE_UP', this);
 
-    gl.clearColor(0, 0, 0, 1);
+    gl.clearColor(0, 0, 0.3, 1);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -58,7 +60,7 @@ export class Engine implements IMessageHandler {
         'resource/shader/fragment-source-1.glsl');
       this.shader.use();
 
-      MaterialManager.registerMaterial(new Material(gl, 'create', 'resource/assets/textures/bg.png', new Color(0, 128, 255, 255)));
+      MaterialManager.registerMaterial(new Material(gl, 'duck', 'resource/assets/textures/duck.png', new Color(0, 128, 255, 255)));
       AudioManager.loadSoundFile("flap", "resource/sounds/flap.mp3", false);
 
       ZoneManager.changeZone(gl, 0);

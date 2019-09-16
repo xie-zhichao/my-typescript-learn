@@ -43,7 +43,7 @@ export class AnimatedSpriteComponentData extends SpriteComponentData implements 
 
 export class AnimatedSpriteComponentBuilder implements IComponentBuilder {
   public get type(): string {
-    return 'animateSprite';
+    return 'animatedSprite';
   }
 
   public buildFromJson(gl: WebGLRenderingContext, json: any): IComponent {

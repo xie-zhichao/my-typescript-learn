@@ -16,7 +16,7 @@ export class ComponentManager {
       }
     }
 
-    throw new Error("Component manager error - type is missing or builder is not registered for this type.");
+    throw new Error(`Component manager error - type is missing or builder is not registered for this type: ${json.type}.`);
   }
 
   private constructor() {}
