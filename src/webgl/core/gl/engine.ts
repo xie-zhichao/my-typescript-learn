@@ -16,17 +16,23 @@ import { SpriteComponentBuilder } from '../components/SpriteComponent';
 import { BehaviorManager } from '../behaviors/BehaviorManager';
 import { KeyboardMovementBehaviorBuilder } from '../behaviors/KeyboardMovementBehaviorData';
 import { RotationBehaviorBuilder } from '../behaviors/RotationBehavior';
+import { Message } from '../message/message';
+import { IMessageHandler } from '../message/IMessageHandler';
+import { MouseContext, InputManager } from '../input/InputManager';
+import { AudioManager } from '../audio/AudioManager';
 
-export class Engine {
+export class Engine implements IMessageHandler {
   private glContext: GLContext;
   private shader: Shader | undefined;
   private projection: Matrix4x4 | undefined;
+
+  private _previousTime = 0;
 
   constructor() {
     this.glContext = WebGLUtils.initialize();
     this.loop = this.loop.bind(this);
 
-    console.log('Engine is created.')
+    console.log('Engine is created.');
   }
 
   public async start() {
@@ -38,9 +44,14 @@ export class Engine {
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
     
     AssetManager.initialize();
+    InputManager.initialize();
     ZoneManager.initialize(gl);
 
+    Message.subscribe('MOUSE_UP', this);
+
     gl.clearColor(0, 0, 0, 1);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     try {
       this.shader = await AsyncShaderLoader.load('basic', gl, 'resource/shader/vertex-source-1.glsl',
@@ -48,6 +59,7 @@ export class Engine {
       this.shader.use();
 
       MaterialManager.registerMaterial(new Material(gl, 'create', 'resource/assets/textures/bg.png', new Color(0, 128, 255, 255)));
+      AudioManager.loadSoundFile("flap", "resource/sounds/flap.mp3", false);
 
       ZoneManager.changeZone(gl, 0);
     } catch (error) {
@@ -56,12 +68,27 @@ export class Engine {
 
     this.resize();
     this.loop();
+
+    console.log('Engine is started.');
   }
 
   private loop() {
+    this.update();
+    this.render();
+  }
+
+  private update() {
+    const delta = performance.now() - this._previousTime;
+
+    console.log('delta', delta);
+
     MessageBus.update(0);
     ZoneManager.update(0);
 
+    this._previousTime = performance.now();
+  }
+
+  private render() {
     const { gl } = this.glContext;
     gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -83,6 +110,15 @@ export class Engine {
 
     gl.viewport(0, 0, cavans.width, cavans.height);
     this.projection = Matrix4x4.orthographic(0, cavans.width, cavans.height, 0, -100.0, 100.0);
+  }
+
+  public onMessage(message: Message) {
+    if (message.code === 'MOUSE_UP') {
+      const context = message.context as MouseContext;
+      document.title = `Pos: [${context.position.x},${context.position.y}]`;
+
+      AudioManager.playSound('flap');
+    }
   }
 
 }

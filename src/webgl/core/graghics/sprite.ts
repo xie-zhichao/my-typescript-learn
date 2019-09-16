@@ -3,6 +3,7 @@ import { Shader } from "../gl/shaders/shader";
 import { Material } from "./material";
 import { MaterialManager } from "./materialManager";
 import { Matrix4x4 } from "../math/matrix4x4";
+import { Vertex } from "./Vertex";
 
 /**
  * Sprite
@@ -13,12 +14,14 @@ export class Sprite {
   protected width: number;
   protected height: number;
 
-  private gl: WebGLRenderingContext;
+  protected gl: WebGLRenderingContext;
   protected buffer: GLBuffer | undefined;
-  private materialName: string | undefined;
-  private material: Material | undefined;
+  protected materialName: string;
+  protected material: Material | undefined;
 
-  public constructor(gl: WebGLRenderingContext, name: string, materialName: string, width: number = 100, height: number = 100) {
+  protected vertices: Vertex[] = [];
+
+  public constructor(gl: WebGLRenderingContext, name: string, materialName: string, width = 100, height = 100) {
     this.gl = gl;
     this._name = name;
     this.materialName = materialName;
@@ -33,9 +36,9 @@ export class Sprite {
 
   public destroy() {
     this.buffer && this.buffer.destroy();
-    this.materialName && MaterialManager.releaseMaterial(this.materialName);
+    MaterialManager.releaseMaterial(this.materialName);
     this.material = undefined;
-    this.materialName = undefined;
+    this.materialName = '';
   }
 
   public load(): void {
@@ -47,16 +50,19 @@ export class Sprite {
     const texCoordArribute = new AttributeInfo(1, 2, 3);
     this.buffer.addAttributeLocation(texCoordArribute);
 
-    const vertices = [
-      0, 0, 0, 0, 0,
-      0, this.height, 0, 0, 1.0,
-      this.width, this.height, 0, 1.0, 1.0,
-      this.width, this.height, 0, 1.0, 1.0,
-      this.width, 0, 0, 1.0, 0,
-      0, 0, 0, 0, 0
+    this.vertices = [
+      new Vertex(0, 0, 0, 0, 0),
+      new Vertex(0, this.height, 0, 0, 1.0),
+      new Vertex(this.width, this.height, 0, 1.0, 1.0),
+      new Vertex(this.width, this.height, 0, 1.0, 1.0),
+      new Vertex(this.width, 0, 0, 1.0, 0),
+      new Vertex(0, 0, 0, 0, 0)
     ];
 
-    this.buffer.pushBackData(vertices);
+    for (const v of this.vertices) {
+      this.buffer.pushBackData(v.toArray());
+    }
+
     this.buffer.upload();
     this.buffer.unbind();
   }
@@ -76,16 +82,16 @@ export class Sprite {
 
     const colorPosition = shader.getUniformLocation('u_tint');
     this.gl.uniform4fv(colorPosition, this.material.tint.toFloat32Array());
-    
+
     const modelPosition = shader.getUniformLocation('u_model');
     this.gl.uniformMatrix4fv(modelPosition, false, model.toFloat32Array());
 
-    if(this.material.diffuseTexture !== undefined) {
+    if (this.material.diffuseTexture !== undefined) {
       this.material.diffuseTexture.activateAndBind(0);
       const diffuseLocation = shader.getUniformLocation('u_diffuse');
       this.gl.uniform1i(diffuseLocation, 0);
     }
-    
+
     this.buffer.bind();
     this.buffer.draw();
   }
