@@ -1,4 +1,6 @@
-﻿/** Represents a 3-component vector. */
+﻿import { Vector2 } from "./vector2";
+
+/** Represents a 3-component vector. */
 export class Vector3 {
 
     private _x: number;
@@ -148,7 +150,7 @@ export class Vector3 {
         return new Vector3(this._x, this._y, this._z);
     }
 
-    //public toVector2(): Vector2 {
-    //    return new Vector2(this._x, this._y);
-    //}
+    public toVector2(): Vector2 {
+       return new Vector2(this._x, this._y);
+    }
 }

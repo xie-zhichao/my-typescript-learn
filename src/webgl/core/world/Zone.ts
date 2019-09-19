@@ -3,6 +3,7 @@ import { SimObject } from "./simObject";
 import { AnyObject } from "../../common/BaseTypes";
 import { ComponentManager } from "../components/ComponentManager";
 import { Shader } from "../gl/shaders/shader";
+import { BehaviorManager } from "../behaviors/BehaviorManager";
 
 export enum ZoneState {
   UNINITIALIZED,
@@ -64,6 +65,14 @@ export class Zone {
       }
     } else {
       console.log(`No components in ${name}`);
+    }
+
+    if (dataSection.behaviors !== undefined) {
+      for (let b in dataSection.behaviors) {
+        const data = dataSection.behaviors[b];
+        const behavior = BehaviorManager.extractBehavior(data);
+        simObject.addBehavior(behavior);
+      }
     }
 
     if (dataSection.children !== undefined) {

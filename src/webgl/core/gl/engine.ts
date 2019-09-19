@@ -21,6 +21,8 @@ import { IMessageHandler } from '../message/IMessageHandler';
 import { MouseContext, InputManager } from '../input/InputManager';
 import { AudioManager } from '../audio/AudioManager';
 import { AnimatedSpriteComponentBuilder } from '../components/AnimatedSpriteComponent';
+import { CollisionComponentBuilder } from '../components/CollisionComponent';
+import { CollisionManager } from '../collision/CollisionManager';
 
 export class Engine implements IMessageHandler {
   private glContext: GLContext;
@@ -41,6 +43,7 @@ export class Engine implements IMessageHandler {
 
     ComponentManager.registerBuilder(new SpriteComponentBuilder());
     ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
+    ComponentManager.registerBuilder(new CollisionComponentBuilder());
     
     BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
@@ -60,7 +63,8 @@ export class Engine implements IMessageHandler {
         'resource/shader/fragment-source-1.glsl');
       this.shader.use();
 
-      MaterialManager.registerMaterial(new Material(gl, 'duck', 'resource/assets/textures/duck.png', new Color(0, 128, 255, 255)));
+      MaterialManager.registerMaterial(new Material(gl, 'end', 'resource/assets/textures/end.png', new Color(0, 128, 255, 255)));
+      MaterialManager.registerMaterial(new Material(gl, 'duck', 'resource/assets/textures/duck.png', Color.white()));
       AudioManager.loadSoundFile("flap", "resource/sounds/flap.mp3", false);
 
       ZoneManager.changeZone(gl, 0);
@@ -82,10 +86,9 @@ export class Engine implements IMessageHandler {
   private update() {
     const delta = performance.now() - this._previousTime;
 
-    console.log('delta', delta);
-
-    MessageBus.update(0);
-    ZoneManager.update(0);
+    MessageBus.update(delta);
+    ZoneManager.update(delta);
+    CollisionManager.update(delta);
 
     this._previousTime = performance.now();
   }
