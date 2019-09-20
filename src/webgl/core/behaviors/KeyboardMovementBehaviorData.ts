@@ -51,12 +51,12 @@ export class KeyboardMovementBehavior extends BaseBehavior {
       this._owner.transform.position.x -= this.speed;
     }
     if (InputManager.isKeyDown(Keys.RIGHT)) {
-      this._owner.transform.position.x -= this.speed;
+      this._owner.transform.position.x += this.speed;
     }
     if (InputManager.isKeyDown(Keys.UP)) {
       this._owner.transform.position.y -= this.speed;
     }
-    if (InputManager.isKeyDown(Keys.LEFT)) {
+    if (InputManager.isKeyDown(Keys.DOWN)) {
       this._owner.transform.position.y += this.speed;
     }
 

@@ -109,13 +109,13 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
         totalWidth = 0;
       }
 
-      let u = (i * this._frameWidth) / this._assetHeight;
-      let v = (yValue * this._frameHeight) / this._assetHeight;
-      let min: Vector2 = new Vector2(u, v);
+      const u = (i * this._frameWidth) / this._assetWidth;
+      const v = (yValue * this._frameHeight) / this._assetHeight;
+      const min = new Vector2(u, v);
 
-      let uMax = ((i * this._frameWidth) + this._frameWidth) / this._assetWidth;
-      let vMax = ((yValue * this._frameHeight) + this._frameHeight) / this._assetHeight;
-      let max = new Vector2(uMax, vMax);
+      const uMax = ((i * this._frameWidth) + this._frameWidth) / this._assetWidth;
+      const vMax = ((yValue * this._frameHeight) + this._frameHeight) / this._assetHeight;
+      const max = new Vector2(uMax, vMax);
 
       this._frameUVs.push(new UVInfo(min, max));
     }
