@@ -16,6 +16,8 @@ export class SimObject {
   private _components: IComponent[] = [];
   private _behaviors: IBehavior[] = [];
 
+  private _isVisible: boolean = true;
+
   private _localMatrix: Matrix4x4 = Matrix4x4.identity();
   private _worldMatrix: Matrix4x4 = Matrix4x4.identity();
 
@@ -43,6 +45,14 @@ export class SimObject {
 
   public get isLoaded(): boolean {
     return this._isLoaded;
+  }
+
+  public get isVisible(): boolean {
+    return this._isVisible;
+  }
+
+  public set isVisible(value: boolean) {
+    this._isVisible = value;
   }
 
   public addChild(child: SimObject) {

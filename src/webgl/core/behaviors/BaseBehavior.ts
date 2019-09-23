@@ -23,7 +23,7 @@ export abstract class BaseBehavior implements IBehavior {
 
   public updateReady(): void { }
 
-  public update(time: number) { console.log(time); }
+  public update(_time: number) { }
 
-  public apply(userData: any) { console.log(userData); }
+  public apply(_userData: any) { }
 }

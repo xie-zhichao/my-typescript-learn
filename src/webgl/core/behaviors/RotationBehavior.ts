@@ -45,7 +45,7 @@ export class RotationBehavior extends BaseBehavior {
 
   public update(time: number): void {
     if (this._owner === undefined) {
-      console.log('owner is undefined.')
+      console.log('owner is undefined.');
       return;
     }
 

@@ -14,7 +14,7 @@ import { ZoneManager } from '../world/ZoneManager';
 import { ComponentManager } from '../components/ComponentManager';
 import { SpriteComponentBuilder } from '../components/SpriteComponent';
 import { BehaviorManager } from '../behaviors/BehaviorManager';
-import { KeyboardMovementBehaviorBuilder } from '../behaviors/KeyboardMovementBehaviorData';
+import { KeyboardMovementBehaviorBuilder } from '../behaviors/KeyboardMovementBehavior';
 import { RotationBehaviorBuilder } from '../behaviors/RotationBehavior';
 import { Message } from '../message/message';
 import { IMessageHandler } from '../message/IMessageHandler';
@@ -23,6 +23,7 @@ import { AudioManager } from '../audio/AudioManager';
 import { AnimatedSpriteComponentBuilder } from '../components/AnimatedSpriteComponent';
 import { CollisionComponentBuilder } from '../components/CollisionComponent';
 import { CollisionManager } from '../collision/CollisionManager';
+import { MouseClickBehaviorBuilder } from '../behaviors/MouseClickBehavior';
 
 export class Engine implements IMessageHandler {
   private glContext: GLContext;
@@ -47,6 +48,7 @@ export class Engine implements IMessageHandler {
     
     BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
+    BehaviorManager.registerBuilder(new MouseClickBehaviorBuilder());
     
     AssetManager.initialize();
     InputManager.initialize();
