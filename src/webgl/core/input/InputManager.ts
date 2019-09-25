@@ -30,36 +30,42 @@ export class InputManager {
   private static _leftDown: boolean = false;
   private static _rightDown: boolean = false;
 
-  public static initialize(): void {
+  private static _resolutionScale = Vector2.zero;
+
+  public static initialize(viewport: HTMLCanvasElement): void {
     for (let i = 0; i < 255; i++) {
       InputManager._keys[i] = false;
     }
 
     window.addEventListener('keydown', InputManager.onKeyDown);
     window.addEventListener('keyup', InputManager.onKeyUp);
-    window.addEventListener('mousemove', InputManager.onMouseMove);
-    window.addEventListener('mousedown', InputManager.onMouseDown);
-    window.addEventListener('mouseup', InputManager.onMouseUp);
+    viewport.addEventListener('mousemove', InputManager.onMouseMove);
+    viewport.addEventListener('mousedown', InputManager.onMouseDown);
+    viewport.addEventListener('mouseup', InputManager.onMouseUp);
   }
 
-  public static isKeyDown(key: Keys):boolean {
+  public static setResolutionScale(scale: Vector2): void {
+    InputManager._resolutionScale.copyFrom(scale);
+  }
+
+  public static isKeyDown(key: Keys): boolean {
     return InputManager._keys[key];
   }
 
-  public static getMousePosition():Vector2 {
+  public static getMousePosition(): Vector2 {
     return new Vector2(this._mouseX, this._mouseY);
   }
 
-  public static getPreviousMousePosition():Vector2 {
+  public static getPreviousMousePosition(): Vector2 {
     return new Vector2(this._previousMouseX, this._previousMouseY);
   }
 
-  private static onKeyDown(event: KeyboardEvent):boolean {
+  private static onKeyDown(event: KeyboardEvent): boolean {
     InputManager._keys[event.keyCode] = true;
     return true;
   }
 
-  private static onKeyUp(event: KeyboardEvent):boolean {
+  private static onKeyUp(event: KeyboardEvent): boolean {
     InputManager._keys[event.keyCode] = false;
     return true;
   }
@@ -67,11 +73,12 @@ export class InputManager {
   private static onMouseMove(event: MouseEvent): void {
     InputManager._previousMouseX = InputManager._mouseX;
     InputManager._previousMouseY = InputManager._mouseY;
-    InputManager._mouseX = event.clientX;
-    InputManager._mouseY = event.clientY;
+    let rect = (event.target as HTMLElement).getBoundingClientRect();
+    InputManager._mouseX = (event.clientX - Math.round(rect.left)) * (1 / InputManager._resolutionScale.x);
+    InputManager._mouseY = (event.clientY - Math.round(rect.top)) * (1 / InputManager._resolutionScale.y);
   }
 
-  private static onMouseDown(event: MouseEvent): void{
+  private static onMouseDown(event: MouseEvent): void {
     if (event.button === 0) {
       this._leftDown = true;
     } else if (event.button === 2) {
@@ -81,7 +88,7 @@ export class InputManager {
     Message.send('MOUSE_DOWN', this, new MouseContext(InputManager._leftDown, InputManager._rightDown, InputManager.getMousePosition()));
   }
 
-  private static onMouseUp(event: MouseEvent): void{
+  private static onMouseUp(event: MouseEvent): void {
     if (event.button === 0) {
       this._leftDown = false;
     } else if (event.button === 2) {

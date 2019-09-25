@@ -67,6 +67,10 @@ export class AnimatedSpriteComponent extends BaseComponent {
       data.frameHeight, data.frameWidth, data.frameHeight, data.frameCount, data.frameSequence);
   }
 
+  public get isPlaying(): boolean {
+    return this._sprite.isPlaying;
+  }
+
   public load() {
     this._sprite.load();
   }
@@ -84,5 +88,17 @@ export class AnimatedSpriteComponent extends BaseComponent {
     this._sprite.draw(shader, this.owner.worldMatrix);
 
     super.render(shader);
+  }
+
+  public play() {
+    this._sprite.play();
+  }
+
+  public stop() {
+    this._sprite.stop();
+  }
+
+  public setFrame(frameNumber: number) {
+    this._sprite.setFrame(frameNumber);
   }
 }

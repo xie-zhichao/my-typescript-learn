@@ -6,7 +6,7 @@
  * 初始化后返回的web gl上下文
  */
 export interface GLContext {
-  cavans: HTMLCanvasElement;
+  canvas: HTMLCanvasElement;
   gl: WebGLRenderingContext;
 }
 
@@ -35,7 +35,7 @@ export class WebGLUtils {
     }
 
     return {
-      cavans,
+      canvas: cavans,
       gl
     };
   }

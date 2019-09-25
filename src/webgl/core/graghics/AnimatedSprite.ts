@@ -2,8 +2,9 @@ import { Vector2 } from "../math/vector2";
 import { IMessageHandler } from "../message/IMessageHandler";
 import { Sprite } from "./sprite";
 import { Message } from "../message/message";
-import { MESSAGE_ASSET_LOADER_ASSET_LOADED } from "../assets/assetManager";
+import { MESSAGE_ASSET_LOADER_ASSET_LOADED, AssetManager } from "../assets/assetManager";
 import { ImageAsset } from "../assets/imageAssetLoader";
+import { MaterialManager } from "./materialManager";
 
 class UVInfo {
   public min: Vector2;
@@ -29,6 +30,7 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
   private _assetLoaded = false;
   private _assetWidth = 2;
   private _assetHeight = 2;
+  private _isPlaying = true;
 
   public constructor(gl: WebGLRenderingContext, name: string, materialName: string, width = 100, height = 100,
     frameWidth = 10, frameHeight = 10, frameCount = 10, frameSequence: number[] = []) {
@@ -42,8 +44,26 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
     Message.subscribe(MESSAGE_ASSET_LOADER_ASSET_LOADED + this.material!.diffuseTextureName, this);
   }
 
+  public get isPlaying(): boolean {
+    return this._isPlaying;
+  }
+
+  public play() {
+    this._isPlaying = true;
+  }
+
+  public stop() {
+    this._isPlaying = false;
+  }
+
   public destroy() {
     super.destroy();
+  }
+
+  public setFrame(frameNumber: number) {
+    if (frameNumber >= this._frameCount) {
+      throw new Error(`Frame is out of range: ${frameNumber}, frame count: ${this._frameCount}`);
+    }
   }
 
   public onMessage(message: Message) {
@@ -59,10 +79,19 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
 
   public load() {
     super.load();
+
+    if (!this._assetLoaded) {
+      this.setupFromMaterial();
+    }
   }
 
   public update(time: number) {
     if (!this._assetLoaded) {
+      this.setupFromMaterial();
+      return;
+    }
+
+    if (!this._isPlaying) {
       return;
     }
 
@@ -118,6 +147,20 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
       const max = new Vector2(uMax, vMax);
 
       this._frameUVs.push(new UVInfo(min, max));
+    }
+  }
+
+  private setupFromMaterial() {
+    if (!this._assetLoaded) {
+      const material = MaterialManager.getMaterial(this.materialName);
+      if (material && material.diffuseTexture && material.diffuseTexture.isLoaded) {
+        if (AssetManager.isAssetLoaded(material.diffuseTextureName)) {
+          this._assetWidth = material.diffuseTexture.width;
+          this._assetHeight = material.diffuseTexture.height;
+          this._assetLoaded = true;
+          this.caculateUVs();
+        }
+      }
     }
   }
 }

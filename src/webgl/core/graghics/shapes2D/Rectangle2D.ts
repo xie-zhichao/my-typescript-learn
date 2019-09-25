@@ -18,7 +18,7 @@ export class Rectangle2D implements IShape2D {
     }
 
     if (json.origin !== undefined) {
-      this.origin.setFromJson(json.position);
+      this.origin.setFromJson(json.origin);
     }
 
     if (json.width === undefined) {

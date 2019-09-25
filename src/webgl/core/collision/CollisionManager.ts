@@ -1,6 +1,6 @@
 import { CollisionComponent } from "../components/CollisionComponent";
 
-class CollisionData {
+export class CollisionData {
   public a: CollisionComponent;
   public b: CollisionComponent;
   public time: number;

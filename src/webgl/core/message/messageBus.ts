@@ -50,8 +50,7 @@ export class MessageBus {
     }
   }
 
-  public static update(time: number):void {
-    console.log('message bus update', time);
+  public static update(_time: number):void {
     if(MessageBus.normalMessageQueue.length === 0) {
       return;
     }

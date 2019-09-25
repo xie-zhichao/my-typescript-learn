@@ -69,6 +69,23 @@ export class SimObject {
     }
   }
 
+  public getComponentByName(name: string): IComponent | undefined {
+    for (const comp of this._components) {
+      if (comp.name === name) {
+        return comp;
+      }
+    }
+
+    for (const child of this._children) {
+      const comp = child.getComponentByName(name);
+      if (comp !== undefined) {
+        return comp;
+      }
+    }
+
+    return undefined;
+  }
+
   public getObjectByName(name: string): SimObject | undefined {
     if (this.name === name) {
       return this;
@@ -110,6 +127,14 @@ export class SimObject {
     for (const c of this._children) {
       c.updateReady();
     }
+
+    for (const b of this._behaviors) {
+      b.updateReady();
+    } 
+
+    for (const c of this._children) {
+      c.updateReady();
+    }
   }
 
   public update(time: number): void {
@@ -119,7 +144,7 @@ export class SimObject {
     for (const c of this._components) {
       c.update(time);
     }
-    
+
     for (const b of this._behaviors) {
       b.update(time);
     }
@@ -130,6 +155,10 @@ export class SimObject {
   }
 
   public render(shader: Shader): void {
+    if (!this._isVisible) {
+      return;
+    }
+    
     for (const c of this._components) {
       c.render(shader);
     }

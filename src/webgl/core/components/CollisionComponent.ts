@@ -91,8 +91,8 @@ export class CollisionComponent extends BaseComponent {
     console.log('onCollisionEntry', this, other);
   }
 
-  public onCollisionUpdate(other: CollisionComponent) {
-    console.log('onCollisionUpdate', this, other);
+  public onCollisionUpdate(_other: CollisionComponent) {
+    // console.log('onCollisionUpdate', this, _other);
   }
 
   public onCollisionExit(other: CollisionComponent) {

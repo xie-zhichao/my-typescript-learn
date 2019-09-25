@@ -3,7 +3,7 @@ import { Engine } from './core/gl/engine';
 let _engine: Engine;
 
 window.onload = function() {
-  _engine = new Engine();
+  _engine = new Engine('viewport');
   _engine.start();
 };
 

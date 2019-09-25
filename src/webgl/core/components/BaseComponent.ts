@@ -26,11 +26,9 @@ export abstract class BaseComponent implements IComponent {
 
   public updateReady(): void { }
 
-  public update(time: number): void {
-    console.log(time);
+  public update(_time: number): void {
   }
 
-  public render(shader: Shader): void { 
-    console.log(shader);
+  public render(_shader: Shader): void { 
   }
 }
